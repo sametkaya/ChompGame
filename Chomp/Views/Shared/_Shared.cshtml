@@ -1,0 +1,114 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/Style/mystyle.css" rel="stylesheet" />
+    <link href="~/Style/kendostyles/kendo.common.min.css" rel="stylesheet" />
+    <link href="~/Style/kendostyles/kendo.rtl.min.css" rel="stylesheet" />
+    <link href="~/Style/kendostyles/kendo.default.min.css" rel="stylesheet" />
+    <link href="~/Style/kendostyles/kendo.default.mobile.min.css" rel="stylesheet" />
+    <script src="~/Script/kendojs/jquery.min.js"></script>
+    <script src="~/Script/kendojs/kendo.all.min.js"></script>
+
+</head>
+<body>
+
+    <header></header>
+
+    <nav>
+        @*@using (Html.BeginForm("StartGame", "Home", FormMethod.Post))
+        {*@
+
+ 
+            <div>
+                <label for="numeric">Satır:</label>
+                <input class="numeric" value="3" style="width: 100%;" id="x" name="x" />
+
+            </div>
+            <div>
+                <label for="numeric">Sutun:</label>
+                <input class="numeric" value="3" style="width: 100%;" id="y" name="y"/>
+            </div>
+
+        <div style ="text-align:center;">
+            <h4>Oyuncu Seçimi!</h4>
+            <input type="radio" name="gamerselection" id="secim1" class="k-radio" checked value="computer">
+            <label class="k-radio-label" for="secim1">Bilgisayar</label>
+            <input type="radio" name="gamerselection" id="secim2" class="k-radio" value="human">
+            <label class="k-radio-label" for="secim2">İnsan</label>
+        </div>
+            <div  style="text-align:center;">
+
+                <h4>Yeni Oyun İçin Tıklayınız!</h4>
+                <input type="submit" value="Yeni Oyun" id="primaryTextButton" class="k-primary StartGameButton"style="width:100%;"/>
+         
+                <script>
+                    $(".StartGameButton").kendoButton();
+                    var button = $(".StartGameButton").data("kendoButton");
+                    button.bind("click", function (e) {
+                      
+                        var gx = $("#x").attr("aria-valuenow");
+                        var gy = $("#y").attr("aria-valuenow");
+                        var gselection = $("#secim1").attr("value");
+                        var val;
+                        // get list of radio buttons with specified name
+                        var radios = $("input[name='gamerselection']")
+
+                        // loop through list of radio buttons
+                        for (var i = 0, len = radios.length; i < len; i++) {
+                            //alert(radios[i].checked);
+                            if (radios[i].checked) { // radio checked?
+                                gselection = radios[i].value; // if so, hold its value in val
+                                break; // and break out of for loop
+                            }
+                        }
+
+
+                        //alert(gselection);
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            data: {x: gx,y:gy,selection:gselection},
+                            url: '@Url.Action("StartGame", "Home")',
+                            success: function (result) {
+
+                                alert("dsds");
+
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                  
+                            
+                                $('#content').html(jqXHR.responseText);
+                       
+                            }
+
+                            
+                            
+                        });
+
+                    });
+                </script>
+               
+            </div>
+        @*}*@
+    </nav>
+
+
+
+   
+    <section id="content">
+        
+        @RenderBody()
+
+    </section>
+    <footer></footer>
+    
+    <script src="~/Script/myscript/kendo.numeric.script.js"></script>
+</body>
+</html>

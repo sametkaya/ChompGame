@@ -1,0 +1,156 @@
+﻿@model Chomp.Models.MatrixTable
+
+
+<div class="gamecontent">
+    @if (@Model.EatableItems.Count <= 0)
+    {
+        string isEatenBy = "";
+        if (@Model.lastItem.isEatenByFirstGamer)
+        {
+            isEatenBy = "isEatenByFirst";
+        }
+        else
+        {
+            isEatenBy = "isEatenBySecond";
+        }
+
+        <div class="modal  @isEatenBy" style=" border-style: double; border-width: 15px; display: table; margin: auto; background-color: white; border-radius: 5px; box-shadow: 2px 2px 2px rgba(0,0,0,0.2); height: 200px; width: 300px; position: fixed; z-index: 19; top: 50%; left: 50%; margin-left: -150px; margin-top: -100px;">
+            <div class="row" style=" width: 100%; text-align: center;">
+                <h4> OYUN BİTTİ</h4>
+            </div>
+            <div class="row" style=" width: 100%; text-align: center;">
+                @{ string imageurl = "../../Images/bug" + @Model.Table[Model.Table.GetLength(0) - 1, Model.Table.GetLength(1) - 1].ItemStyle + ".png";}
+                <img src=@imageurl class="img-thumbnail" style="width: 100%; height: 100%; max-height: 73px; max-width: 73px; ">
+            </div>
+            <div class="row" style=" width: 100%; text-align: center;">
+                @if (@Model.lastItem.isEatenByFirstGamer)
+                {
+                    <h4> 1. OYUNCU YEDİ</h4>
+                }
+                else
+                {
+                    <h4> 2. OYUNCU YEDİ</h4>
+                }
+
+            </div>
+            <div class="row" style=" width: 100%; text-align: center;">
+                <input type="button" value="Tamam" id="primaryTextButton" class="k-primary modalclose" style="width:100%;" />
+
+                <script>
+                    $(".modalclose").kendoButton();
+                    var button = $(".modalclose").data("kendoButton");
+                    button.bind("click", function (e) {
+              
+                        $(".modal").remove();
+                    });
+                </script>
+            </div>
+        </div>
+    }
+    <table id="game-table" border="1" style="position: relative; width: 100%; max-height:100%; max-width:100%; table-layout: auto; border-collapse: separate; padding: 10px; margin: 0 auto; padding-bottom: 1%; " cellspacing="0" cellpadding="0">
+        @*@{Random rnd = new Random();}*@
+        @{string sizecl = (100 / Model.Table.GetLength(0)).ToString();
+        string sizerw = (100 / Model.Table.GetLength(1)).ToString();
+
+        }
+        @for (int i = 0; i < Model.Table.GetLength(0); i++)
+        {
+
+            <tr style="width: 10%; height:10%; " data-bind="events: { mouseover: listener, mouseout: listener }">
+
+                @for (int j = 0; j < Model.Table.GetLength(1); j++)
+                {
+                    string isEatenBy = "";
+                    if (@Model.Table[i, j].isEaten)
+                    {
+                        if (@Model.Table[i, j].isEatenByFirstGamer)
+                        {
+                            isEatenBy = "isEatenByFirst";
+                        }
+                        else
+                        {
+                            isEatenBy = "isEatenBySecond";
+                        }
+
+                    }
+                    else
+                    {
+                        isEatenBy = "isNotEaten";
+                    }
+
+                    string imageurl = "";
+                    if (@Model.Table[i, j].Type == 'O')
+                    {
+                        <td align="center" width="@sizerw%" height="@sizerw%" class="eatable-game-image @isEatenBy" onclick="selectfonc(this)">
+
+                            @{imageurl = "../../Images/coke" + @Model.Table[i, j].ItemStyle + ".png";}
+                            <img src=@imageurl class="img-thumbnail" style="width: 100%; height: 100%; max-height: 73px; max-width: 73px; ">
+                        </td>
+                    }
+                    else
+                    {
+
+                        <td align="center" width="@sizerw%" height="@sizerw%" class="game-image" style="background: #FF5A18" onmouseover="disable = true;">
+
+                            @{imageurl = "../../Images/bug" + @Model.Table[i, j].ItemStyle + ".png";}
+                            <img src=@imageurl class="img-thumbnail" style="width: 100%; height: 100%; max-height: 73px; max-width: 73px; ">
+                        </td>
+                    }
+
+
+
+
+
+
+
+                }
+
+
+
+            </tr>
+
+
+        }
+
+    </table>
+
+</div>
+<script>
+    function selectfonc(x) {
+        //alert("cloumn: " + x.cellIndex + "row" + x.parentNode.rowIndex);
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            data: { x: x.cellIndex, y: x.parentNode.rowIndex },
+            url: '@Url.Action("EatItems", "Home")',
+            success: function (result) {
+
+                //alert("success");
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $('#content').html(jqXHR.responseText);
+                ////alert("error");
+                //if (jqXHR.responseText.trim() == "True") {
+                //    x.classList.add('itemselected');
+                //    //alert("true");
+
+                //}
+                //else {
+
+
+                //    x.classList.remove('itemselected');
+                //    //alert("fasle");
+                //}
+                ////$('#content').html(jqXHR.responseText);
+
+            }
+
+
+
+        });
+
+
+    }
+</script>
